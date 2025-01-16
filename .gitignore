@@ -144,4 +144,6 @@ gradle-app.setting
 
 ### my config ###
 HELP.md
+*.yml
+*.properties
 # End of https://www.toptal.com/developers/gitignore/api/gradle,java,intellij+all
