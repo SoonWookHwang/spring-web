@@ -15,10 +15,13 @@ import java.util.Map;
 @RequestMapping(value = "/jpa")
 public class JpaRestController {
 
+    /**
+     검색 조건을 통한 데이터 조회
+     페이징 처리 및 정렬 적용
+     */
     @GetMapping(value = "/getProduct")
     public ResponseEntity<Map<String,Object>> getData(@RequestBody Map<String,Object> params){
         Map<String,Object> data = new HashMap<>();
-
-
+        return ResponseEntity.ok(data);
     }
 }
