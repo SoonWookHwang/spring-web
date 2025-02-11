@@ -9,4 +9,5 @@ public class ProductSearchQueryDto {
     private Integer pageSize = 10; // 기본값 10
     private String orderBy = "id"; // 정렬 기본값
     private String orderType = "ASC";
+    private String jpaType = "method"; //  검색 jpa 방식 선택
 }

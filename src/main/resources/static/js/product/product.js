@@ -3,7 +3,8 @@ let productSearchDto = {
     pageNum: 0,
     pageSize: 10,
     orderBy: "productId",
-    orderType: "ASC"
+    orderType: "ASC",
+    jpaType : "method"
 }
 let MAXPAGE = 0;
 document.addEventListener("DOMContentLoaded", function () {
@@ -18,6 +19,10 @@ function init() {
             search();
         }
     });
+    document.getElementById("jpaType").addEventListener("change",function(event){
+        productSearchDto.jpaType = event.target.value;
+        console.log("event.target", event.target.value);
+    })
 
 }
 function search(){

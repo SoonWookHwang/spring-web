@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class JpaPageController {
     private final ProductService productService;
 
+
     @GetMapping("/products")
     public String products(Model model) {
         model.addAttribute("pageTitle","product 검색 페이지");
