@@ -29,7 +29,7 @@
         public Page<ProductDto> getAllProducts() {
             Pageable pageable = PageRequest.of(0, 10);
             Page<Product> productPage = productRepository.findAll(pageable);
-            Page<ProductDto> productDtoPage = productPage.map(this::convertToDto);
+            Page<ProductDto> productDtoPage = productPage.map(ProductDto::fromEntity);
             return productDtoPage;
         }
         //Spring Data JPA의 기본 Query Method 방식
@@ -37,14 +37,14 @@
             Sort sort = Sort.by(Sort.Direction.fromString(dto.getOrderType()), dto.getOrderBy());
             Pageable pageable = PageRequest.of(dto.getPageNum(), dto.getPageSize(), sort);
             Page<Product> productPage = productRepository.findByNameContainingIgnoreCase(dto.getProductName(), pageable);
-            return productPage.map(this::convertToDto);
+            return productPage.map(ProductDto::fromEntity);
         }
         // @Query annotation JPQL을 사용한  방식
         public Page<ProductDto> searchProductsByJPQLQuery(ProductSearchQueryDto dto) {
             Sort sort = Sort.by(Sort.Direction.fromString(dto.getOrderType()), dto.getOrderBy());
             Pageable pageable = PageRequest.of(dto.getPageNum(), dto.getPageSize(), sort);
             Page<Product> productPage = productRepository.searchByName(dto.getProductName(), pageable);
-            return productPage.map(this::convertToDto);
+            return productPage.map(ProductDto::fromEntity);
         }
         //Spring Data JPA의 Specification API를 활용한 동적 쿼리 방식
         public Page<ProductDto> searchProductsByJPASpecification(ProductSearchQueryDto dto) {
@@ -60,18 +60,18 @@
                 return cb.and(predicates.toArray(new Predicate[0]));
             };
             Page<Product> productPage = productRepository.findAll(spec, pageable);
-            return productPage.map(this::convertToDto);
+            return productPage.map(ProductDto::fromEntity);
         }
 
-        private ProductDto convertToDto(Product product) {
-            ProductDto dto = new ProductDto();
-            dto.setProductId(product.getProductId());
-            dto.setName(product.getName());
-            dto.setPrice(product.getPrice());
-            dto.setStock(product.getStock());
-            dto.setCategoryName(product.getCategory().getName());
-            return dto;
-        }
+//        private ProductDto convertToDto(Product product) {
+//            ProductDto dto = new ProductDto();
+//            dto.setProductId(product.getProductId());
+//            dto.setName(product.getName());
+//            dto.setPrice(product.getPrice());
+//            dto.setStock(product.getStock());
+//            dto.setCategoryName(product.getCategory().getName());
+//            return dto;
+//        }
 
         public void insertProduct(ProductDto dto) {
             ProductCategory productCategory = categoryRepository.findById(dto.getCategoryId()).orElseThrow(()-> new ProductException("해당되는 카테고리가 없음"));
