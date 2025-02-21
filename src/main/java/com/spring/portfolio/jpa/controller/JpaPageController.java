@@ -1,8 +1,9 @@
 package com.spring.portfolio.jpa.controller;
 
 import com.spring.portfolio.jpa.dto.ProductDto;
-import com.spring.portfolio.jpa.entity.Product;
+import com.spring.portfolio.jpa.entity.ProductCategory;
 import com.spring.portfolio.jpa.service.ProductService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -23,5 +24,13 @@ public class JpaPageController {
         Page<ProductDto> data = productService.getAllProducts();
         model.addAttribute("productList", data.getContent() );
         return "product/search-product";
+    }
+    @GetMapping("/products/add")
+    public String productsInsert(Model model) {
+        model.addAttribute("pageTitle", "product 삽입 페이지");
+        List<ProductCategory> categories = productService.findAllCategories(); // 카테고리 리스트 조회
+        model.addAttribute("categories", categories);
+        model.addAttribute("productDto", new ProductDto());
+        return "product/insert-product";
     }
 }

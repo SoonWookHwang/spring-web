@@ -2,7 +2,9 @@ package com.spring.portfolio.jpa.controller;
 
 import com.spring.portfolio.jpa.dto.ProductDto;
 import com.spring.portfolio.jpa.dto.ProductSearchQueryDto;
+import com.spring.portfolio.jpa.dto.SearchResponseDto;
 import com.spring.portfolio.jpa.service.ProductService;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,8 @@ public class JpaRestController {
      * 페이징 처리 및 정렬 적용
      */
     @PostMapping("/getProduct")
-    public ResponseEntity<Page<ProductDto>> getData(@RequestBody ProductSearchQueryDto dto) {
+    public ResponseEntity<SearchResponseDto> getData(@RequestBody ProductSearchQueryDto dto) {
+        LocalDateTime start = LocalDateTime.now();
         // JPA 조회 방식 선택에 따른 분기
         Page<ProductDto> productDtoPage = switch (dto.getJpaType()) {
             case "method" -> {log.info("JPA method 방식 조회"); yield  productService.searchProductsByJPAQueryMethod(dto);}
@@ -33,7 +36,15 @@ public class JpaRestController {
             case "jpql" -> {log.info("JPA jpql 방식 조회"); yield productService.searchProductsByJPQLQuery(dto);}
             default -> {log.info("JPA default 방식 조회"); yield productService.searchProductsByJPAQueryMethod(dto);}
         };
-        return ResponseEntity.ok(productDtoPage);
+        LocalDateTime end = LocalDateTime.now();
+        // 검색 시간 계산 (밀리초 단위)
+        Integer searchDuration = (int) java.time.Duration.between(start, end).toMillis();
+
+        // 응답 DTO 생성
+        SearchResponseDto responseDto = new SearchResponseDto(productDtoPage, searchDuration);
+
+        // ResponseEntity로 반환
+        return ResponseEntity.ok(responseDto);
     }
     @PostMapping("/products")
     public ResponseEntity<?> insertData(@RequestBody ProductDto dto) {

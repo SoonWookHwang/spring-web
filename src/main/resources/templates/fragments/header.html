@@ -1,8 +1,25 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <header th:fragment="header">
-    <div>
-        <h1>사이트 헤더</h1>
+    <div class="header-container" style="display: flex; justify-content: space-between;">
+        <div style="flex: 1;">
+            <h1 id="header_title">사이트 헤더</h1>
+        </div>
+        <div class="button-container" style="display: flex;">
+            <a href="/jpa/products">Product 조회</a>
+            <a href="/jpa/products/add">Product 추가</a>
+            <a href=""></a>
+        </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            let current_endpoint = window.location.href;
+            if(current_endpoint.includes("products")){
+                document.querySelector("#header_title").innerText = "JPA 관련 페이지";
+            }
+        })
+    </script>
 </header>
 </html>

@@ -36,22 +36,28 @@ public class DataInitializer {
 
     @Transactional
     public void insertTestData() {
-        // 1. Customer 데이터 삽입 (Batch Insert 활용)
+        // 1. Customer 데이터 삽입
         List<Customer> users = IntStream.range(0, 1000)
-                .mapToObj(i -> new Customer(null, "User" + i, "user" + i + "@example.com", null))
-                .collect(Collectors.toList());
+            .mapToObj(i -> new Customer(null, "User" + i, "user" + i + "@example.com", null))
+            .collect(Collectors.toList());
         customerRepository.saveAll(users);
 
-        // 2. ProductCategory 데이터 삽입
+        // 2. ProductCategory 데이터 삽입 (상위-하위 카테고리 설정)
         ProductCategory electronics = new ProductCategory(null, "Electronics", null, new ArrayList<>());
         ProductCategory smartphones = new ProductCategory(null, "Smartphones", electronics, new ArrayList<>());
-        ProductCategory television = new ProductCategory(null, "Television", electronics, new ArrayList<>());
+        ProductCategory televisions = new ProductCategory(null, "Television", electronics, new ArrayList<>());
+        ProductCategory laptops = new ProductCategory(null, "Laptops", electronics, new ArrayList<>());
+        ProductCategory android = new ProductCategory(null, "Android", smartphones, new ArrayList<>());
+        ProductCategory iphone = new ProductCategory(null, "iPhone", smartphones, new ArrayList<>());
 
-        categoryRepository.saveAll(Arrays.asList(electronics, smartphones, television));
+        // 상위 카테고리 저장
+        categoryRepository.saveAll(Arrays.asList(electronics, smartphones, televisions, laptops));
 
-        List<ProductCategory> categories = Arrays.asList(smartphones, television);
+        // 하위 카테고리 저장
+        categoryRepository.saveAll(Arrays.asList(android, iphone));
 
-        // 3. Product 데이터 삽입 (Batch Insert + flush & clear)
+        // 3. Product 데이터 삽입
+        List<ProductCategory> categories = Arrays.asList(smartphones, televisions, laptops);
         List<Product> products = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             ProductCategory randomCategory = categories.get(ThreadLocalRandom.current().nextInt(categories.size()));

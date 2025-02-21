@@ -65,17 +65,19 @@ footer {
 /* 검색 폼 스타일 */
 .search-area {
     background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
+
+    /*border-radius: 10px;*/
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.28);
 }
 
-.search-area .form-label {
+.search-area .form-label, .filter-container .form-label {
     font-weight: bold;
     color: #495057;
 }
@@ -165,4 +167,11 @@ footer {
     color: #6c757d;
     pointer-events: none;
     background-color: #f8f9fa;
+}
+.button-container a {
+    margin-right: 3vw !important;
+    text-decoration: none !important;
+    color: white !important;
+    text-align: center !important;
+    font-size: 1.2rem !important;
 }

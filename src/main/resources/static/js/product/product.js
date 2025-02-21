@@ -53,7 +53,7 @@ function getProductData() {
         console.log("productList",data);
         MAXPAGE = data.totalPages -1;
         printProductList(data);
-        printPagination(data);
+        printPagination(data.productDtoPage);
     }).catch(error=>{
         alert(error.message);
     })
@@ -63,7 +63,9 @@ function getProductData() {
 function printProductList(data) {
     const product_list = document.querySelector("#product_list");
     product_list.innerHTML = "";
-    data.content.forEach((product,index) =>{
+    document.querySelector("#search_duration").innerText = data.searchDuration;
+    document.querySelector("#search_cnt").innerText = data.productDtoPage.totalElements;
+    data.productDtoPage.content.forEach((product,index) =>{
         let temp = document.createElement('tr');
         temp.innerHTML = `<td>${index + 1}</td>
                             <td>${product.name}</td>
