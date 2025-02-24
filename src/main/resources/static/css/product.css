@@ -39,3 +39,10 @@
 .category-filter.active .category-options {
   display: block;
 }
+
+.product-insert-container, .product-update-container {
+  display: none;
+}
+.product-insert-container.active, .product-update-container.active {
+  display: block;
+}

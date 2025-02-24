@@ -91,15 +91,21 @@
 
     <!-- 검색 결과 리스트 -->
     <div class="mt-4">
-      <h3>검색 결과</h3>
+      <div class="" style="display: flex; justify-content: space-between;">
+        <div style="margin-left: 10px"><h3>검색 결과</h3></div>
+        <div><button type="button" class="btn btn-primary w-100" onclick="deleteProducts()">삭제하기</button></div>
+      </div>
+
       <table class="table table-striped">
         <thead>
         <tr>
-          <th>상품 번호</th>
+          <th></th>
+          <th class="col-1">상품 번호</th>
           <th>상품명</th>
           <th>가격</th>
           <th>재고량</th>
           <th>카테고리</th>
+          <th>수정하기</th>
         </tr>
         </thead>
         <tbody id="product_list">

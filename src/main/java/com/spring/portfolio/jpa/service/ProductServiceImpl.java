@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,13 @@ public class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
   private final ProductCategoryRepository categoryRepository;
+
+  @Override
+  public ProductDto getProduct(Long productId) {
+    Product target = productRepository.findById(productId)
+        .orElseThrow(() -> new ProductException("해당 제품이 존재하지 않습니다."));
+    return ProductDto.fromEntity(target);
+  }
 
   @Override
   public Page<ProductDto> getAllProducts() {
@@ -139,21 +147,28 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public void insertProduct(ProductDto dto) {
+  @Transactional
+  public Long insertProduct(ProductDto dto) {
     ProductCategory productCategory = categoryRepository.findById(dto.getCategoryId())
         .orElseThrow(() -> new ProductException("해당되는 카테고리가 없음"));
     Product newProduct = Product.of(dto, productCategory);
-    productRepository.save(newProduct);
+    return productRepository.save(newProduct).getProductId();
   }
 
   @Override
-  public void updateProduct(ProductDto dto) {
-
+  @Transactional
+  public Long updateProduct(ProductDto dto) {
+    Product target = productRepository.findById(dto.getProductId()).orElseThrow(()->new ProductException("해당 제품이 존재하지 않습니다."));
+    ProductCategory updateCategory = categoryRepository.findById(dto.getCategoryId())
+        .orElseThrow(() -> new ProductException(("잘못된 카테고리 값입니다.")));
+    target.update(dto, updateCategory);
+    return target.getProductId();
   }
 
   @Override
-  public void deleteProduct(Long productId) {
-
+  @Transactional
+  public void deleteProduct(List<Long> productIds) {
+    productRepository.deleteAllById(productIds);
   }
 
   @Override
