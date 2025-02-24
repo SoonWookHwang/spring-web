@@ -57,7 +57,7 @@ public class DataInitializer {
         categoryRepository.saveAll(Arrays.asList(android, iphone));
 
         // 3. Product 데이터 삽입
-        List<ProductCategory> categories = Arrays.asList(smartphones, televisions, laptops);
+        List<ProductCategory> categories = Arrays.asList(smartphones, televisions, laptops,android,iphone);
         List<Product> products = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             ProductCategory randomCategory = categories.get(ThreadLocalRandom.current().nextInt(categories.size()));

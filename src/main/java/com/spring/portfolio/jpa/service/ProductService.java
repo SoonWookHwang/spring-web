@@ -1,5 +1,6 @@
 package com.spring.portfolio.jpa.service;
 
+import com.spring.portfolio.jpa.dto.CategoryDto;
 import com.spring.portfolio.jpa.dto.ProductDto;
 import com.spring.portfolio.jpa.dto.ProductSearchQueryDto;
 import com.spring.portfolio.jpa.entity.ProductCategory;
@@ -40,4 +41,6 @@ public interface ProductService {
   void deleteProduct(Long productId);
 
   List<ProductCategory> findAllCategories();
+
+  CategoryDto getCategory(Long categoryId);
 }

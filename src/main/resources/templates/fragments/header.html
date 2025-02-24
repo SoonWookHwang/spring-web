@@ -6,10 +6,10 @@
         <div style="flex: 1;">
             <h1 id="header_title">사이트 헤더</h1>
         </div>
-        <div class="button-container" style="display: flex;">
-            <a href="/jpa/products">Product 조회</a>
-            <a href="/jpa/products/add">Product 추가</a>
-            <a href=""></a>
+        <div class="button-container" id="button-container" style="display: flex;">
+        </div>
+        <div class="home-button button-container">
+            <a href="/">홈</a>
         </div>
     </div>
 
@@ -18,6 +18,8 @@
             let current_endpoint = window.location.href;
             if(current_endpoint.includes("products")){
                 document.querySelector("#header_title").innerText = "JPA 관련 페이지";
+                document.querySelector("#button-container").innerHTML = `<a href="/jpa/products">Product 조회</a>
+            <a href="/jpa/products/add">Product 추가</a>`
             }
         })
     </script>

@@ -40,22 +40,25 @@
       </div>
     </div>
     <div class="row g-3 filter-area mb-4 filter-container">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="categoryFilter" class="form-label">카테고리</label>
-        <select id="categoryFilter" name="categoryFilter" class="form-select">
-          <option value="">전체</option>
-          <option value="category1">카테고리 1</option>
-          <option value="category2">카테고리 2</option>
-          <option value="category3">카테고리 3</option>
-        </select>
+        <div id="categoryFilter" class="category-filter form-select">
+          <div class="selected-category">전체</div>
+          <div class="category-options" id="category_options">
+            <div class="category-item" data-category-id="">전체</div>
+            <div class="category-item" data-category-id="1">카테고리 1</div>
+            <div class="category-item" data-category-id="2">카테고리 2</div>
+            <div class="category-item" data-category-id="3">카테고리 3</div>
+          </div>
+        </div>
       </div>
-      <div class="col-md-3">
-        <label for="priceRange" class="form-label">가격 범위</label>
+      <div class="col-md-5" id="price-range-container">
+        <label class="form-label">가격 범위</label>
         <div class="d-flex">
-          <input type="number" id="minPrice" name="minPrice" class="form-control"
+          <input type="number" id="minPrice" min="0" name="minPrice" class="form-control"
                  placeholder="최소 가격">
           <span class="mx-2">~</span>
-          <input type="number" id="maxPrice" name="maxPrice" class="form-control"
+          <input type="number" id="maxPrice" min="0" name="maxPrice" class="form-control"
                  placeholder="최대 가격">
         </div>
       </div>
@@ -68,8 +71,8 @@
           <option value="high">높음</option>
         </select>
       </div>
-      <div class="col-md-3 d-flex align-items-end">
-        <button id="filter_btn" name="filter_btn" type="button" onclick="applyFilter()"
+      <div class="col-md-2 d-flex align-items-end">
+        <button id="filter_btn" name="filter_btn" type="button" onclick="getProductData()"
                 class="btn btn-secondary w-100">적용
         </button>
       </div>

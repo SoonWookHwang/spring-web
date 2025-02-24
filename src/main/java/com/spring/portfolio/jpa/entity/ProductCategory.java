@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.ToString;
 
 @Entity
 @Getter
@@ -32,4 +33,5 @@ public class ProductCategory extends TimeStamps{
     @JsonManagedReference
     @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductCategory> subCategories = new ArrayList<>();
+
 }
