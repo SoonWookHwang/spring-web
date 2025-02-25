@@ -6,8 +6,8 @@ let productSearchDto = {
   orderType: "ASC",
   jpaType: "method",
   categoryId: "",
-  minPrice : "",
-  maxPrice : "",
+  minPrice: "",
+  maxPrice: "",
 }
 let MAXPAGE = 0;
 document.addEventListener("DOMContentLoaded", function () {
@@ -16,25 +16,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // 초기 페이지 로드
 function init() {
-  getProductData();
-  document.getElementById("keyword").addEventListener("keydown",
-      function (event) {
-        if (event.key === 'Enter') {
-          search();
-        }
-      });
-  document.getElementById("jpaType").addEventListener("change",
-      function (event) {
-        productSearchDto.jpaType = event.target.value;
-        console.log("event.target", event.target.value);
-      })
-  let categoryArea = document.querySelector("#categoryFilter");
-  categoryArea.addEventListener("click", function () {
-    categoryArea.classList.toggle("active");
-  });
-  setTimeout(function () {
-    getCategories(1)
-  }, 300);
+  let current_url = window.location.href;
+  console.log(current_url);
+  if (current_url.includes("update")) {
+    document.querySelector(".product-update-container").classList.add("active");
+    document.querySelector(".product-insert-container").classList.remove(
+        "active");
+  }
+  if (current_url === "http://localhost:8080/jpa/products") {
+    getProductData();
+    document.getElementById("keyword").addEventListener("keydown",
+        function (event) {
+          if (event.key === 'Enter') {
+            search();
+          }
+        });
+    document.getElementById("jpaType").addEventListener("change",
+        function (event) {
+          productSearchDto.jpaType = event.target.value;
+          console.log("event.target", event.target.value);
+        })
+    let categoryArea = document.querySelector("#categoryFilter");
+    categoryArea.addEventListener("click", function () {
+      categoryArea.classList.toggle("active");
+    });
+    setTimeout(function () {
+      getCategories(1)
+    }, 300);
+  }
 }
 
 function search() {
@@ -54,7 +63,8 @@ function getProductData() {
   let maxPrice = parseInt(document.querySelector("#maxPrice").value) || null;
   if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
     alert("가격범위가 잘못 설정되었습니다");
-    document.querySelector("#price-range-container").style.border= "1px solid red";
+    document.querySelector(
+        "#price-range-container").style.border = "1px solid red";
     setTimeout(function () {
       document.querySelector("#price-range-container").style.border = "";
     }, 2000);
@@ -94,14 +104,16 @@ function printProductList(data) {
   document.querySelector("#search_duration").innerText = data.searchDuration;
   document.querySelector(
       "#search_cnt").innerText = data.productDtoPage.totalElements;
-  let indexAddingNum = data.productDtoPage.number *data.productDtoPage.size;
+  let indexAddingNum = data.productDtoPage.number * data.productDtoPage.size;
   data.productDtoPage.content.forEach((product, index) => {
     let temp = document.createElement('tr');
-    temp.innerHTML = `<td>${index + 1 + indexAddingNum}</td>
+    temp.innerHTML = `<td><input class="delete-checkbox" type="checkbox" data-value="${product.productId}"></td>
+                            <td class="col-1">${index + 1 + indexAddingNum}</td>
                             <td>${product.name}</td>
                             <td>${product.price}</td>
                             <td>${product.stock}</td>
-                            <td>${product.categoryName}</td>`;
+                            <td>${product.categoryName}</td>
+                            <td><button class="btn btn-primary w-50" onclick="goUpdatePage(${product.productId})">수정</button> </td>`;
     product_list.insertAdjacentElement("beforeend", temp);
   })
 }
@@ -195,9 +207,9 @@ function getCategories(categoryId) {
   }).then(data => {
     // console.log(data);
     let categoryArea = document.querySelector("#category_options");
-    if (data.children.length>0) {
+    if (data.children.length > 0) {
       categoryArea.innerHTML = "";
-      if(data.children[0].parentId){
+      if (data.children[0].parentId) {
         categoryArea.innerHTML += `<div class="category-item" data-category-id="${data.children[0].parentId}">이전으로</div>`
       }
       data.children.forEach(subCategory => {
@@ -216,5 +228,123 @@ function getCategories(categoryId) {
         getProductData();
       });
     })
+  })
+}
+
+/// Product 생성 페이지 관련 JS
+
+async function insertProduct() {
+  let productName = document.querySelector("#name").value;
+  let price = document.querySelector("#price").value;
+  let stock = document.querySelector("#stock").value;
+  let categoryId = document.querySelector("#category").value;
+  let productDto = {
+    "name": productName ? productName : null,
+    "price": price ? price : null,
+    "stock": stock ? stock : null,
+    "categoryId": categoryId ? categoryId : null
+  }
+  if (!await validInsertProduct(productDto)) {
+
+  }
+  fetch("/jpa/products", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(productDto)
+  }).then(res => {
+    if (res.ok) {
+      return res.text();
+    }
+  }).then(data => {
+    alert(data);
+  })
+
+}
+
+function goUpdatePage(productId) {
+  window.location.href = `/jpa/products/update/${productId}`;
+}
+
+async function updateProduct() {
+  let targetId = document.querySelector("#id").value;
+  let productName = document.querySelector("#update_name").value;
+  let price = document.querySelector("#update_price").value;
+  let stock = document.querySelector("#update_stock").value;
+  let categoryId = document.querySelector("#update_category").value;
+  let productDto = {
+    "productId": targetId,
+    "name": productName ? productName : null,
+    "price": price ? price : null,
+    "stock": stock ? stock : null,
+    "categoryId": categoryId ? categoryId : null
+  }
+  if (!await validInsertProduct(productDto)) {
+    return;
+  }
+  console.log("productDto", productDto);
+  fetch("/jpa/products", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(productDto)
+  }).then(res => {
+    if (res.ok) {
+      return res.text();
+    }
+  }).then(data => {
+    alert(data);
+  })
+
+}
+
+function validInsertProduct(productDto) {
+  return new Promise(resolve => {
+    if (!productDto.name) {
+      alert("상품명 입력값이 조건에 맞지 않습니다")
+      resolve(false);
+    }
+    if (!productDto.price) {
+      alert("상품 가격을 입력해주세요")
+      resolve(false);
+    }
+    if (!productDto.stock) {
+      alert("재고량을 입력해주세요")
+      resolve(false);
+    }
+    if (!productDto.categoryId) {
+      alert("카테고리를 설정해주세요")
+      resolve(false);
+    }
+    resolve(true);
+  })
+}
+
+function deleteProducts(){
+  let targetIds = [];
+  document.querySelectorAll(".delete-checkbox").forEach(cb=>{
+    if(cb.checked){
+      targetIds.push(cb.getAttribute("data-value"));
+    }
+  })
+  if(targetIds.length<1){
+    alert("삭제할 제품을 선택해주세요");
+    return;
+  }
+  fetch("/jpa/products/delete", {
+    method : "DELETE",
+    headers : {
+      "Content-Type" : "application/json"
+    },
+    body: JSON.stringify(targetIds),
+  }).then(res=>{
+    if(res.ok){
+      return res.text();
+    }
+  }).then(data=>{
+    alert(data);
+    getProductData();
   })
 }

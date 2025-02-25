@@ -6,13 +6,16 @@ import com.spring.portfolio.jpa.dto.ProductSearchQueryDto;
 import com.spring.portfolio.jpa.dto.SearchResponseDto;
 import com.spring.portfolio.jpa.service.ProductService;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,13 +54,23 @@ public class JpaRestController {
     }
     @PostMapping("/products")
     public ResponseEntity<?> insertData(@RequestBody ProductDto dto) {
-        productService.insertProduct(dto);
-        return ResponseEntity.ok("success");
+        Long newProductId = productService.insertProduct(dto);
+        return ResponseEntity.ok("success 생성된 Product ID : " + newProductId);
+    }
+    @PutMapping("/products")
+    public ResponseEntity<?> updateData(@RequestBody ProductDto dto) {
+        Long newProductId = productService.updateProduct(dto);
+        return ResponseEntity.ok("success 수정된 Product ID : " + newProductId);
     }
 
     @GetMapping("/products/categories/{categoryId}")
     public ResponseEntity<CategoryDto> list(@PathVariable Long categoryId) {
         CategoryDto category = productService.getCategory(categoryId);
         return ResponseEntity.ok(category);
+    }
+    @DeleteMapping("/products/delete")
+    public ResponseEntity<?> deleteProducts(@RequestBody List<Long> productIds){
+        productService.deleteProduct(productIds);
+        return ResponseEntity.ok("success 삭제성공 삭제된 productId 목록 : " + productIds);
     }
 }

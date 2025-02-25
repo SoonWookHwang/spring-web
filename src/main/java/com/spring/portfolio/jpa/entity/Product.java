@@ -28,4 +28,11 @@ public class Product extends TimeStamps{
     public static Product of(ProductDto dto, ProductCategory category) {
         return new Product(null, dto.getName(), dto.getPrice(), dto.getStock(), category);
     }
+
+    public void update(ProductDto dto,ProductCategory updateCategory){
+        this.name = dto.getName();
+        this.price = dto.getPrice();
+        this.stock = dto.getStock();
+        this.category = updateCategory;
+    }
 }

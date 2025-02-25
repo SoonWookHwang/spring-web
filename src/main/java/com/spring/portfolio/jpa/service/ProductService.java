@@ -12,34 +12,41 @@ import org.springframework.stereotype.Service;
 public interface ProductService {
 
   /*
-  * 조회 관련 메서드
-  * */
+   * 조회 관련 메서드
+   * */
+  ProductDto getProduct(Long productId);
+
   Page<ProductDto> getAllProducts();
 
   //Spring Data JPA의 기본 Query Method 방식
   Page<ProductDto> searchProductsByJPAQueryMethod(ProductSearchQueryDto dto);
+
   // @Query annotation JPQL을 사용한  방식
   Page<ProductDto> searchProductsByJPQLQuery(ProductSearchQueryDto dto);
+
   //Spring Data JPA의 Specification API를 활용한 동적 쿼리 방식
   Page<ProductDto> searchProductsByJPASpecification(ProductSearchQueryDto dto);
-
 
 
   /*
    * 삽입 관련 메서드
    * */
-  void insertProduct(ProductDto dto);
+  Long insertProduct(ProductDto dto);
 
   /*
    * 수정 관련 메서드
    * */
-  void updateProduct(ProductDto dto);
+  Long updateProduct(ProductDto dto);
 
   /*
    * 삭제 관련 메서드
    * */
-  void deleteProduct(Long productId);
+  void deleteProduct(List<Long> productIds);
 
+
+  /*
+   * 카테고리 관련 메서드
+   * */
   List<ProductCategory> findAllCategories();
 
   CategoryDto getCategory(Long categoryId);
