@@ -1,0 +1,177 @@
+/* 기본 스타일 초기화 */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Flexbox 레이아웃 적용 */
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    color: white;
+    padding: 20px 0;
+    text-align: left;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 24px;
+    margin-left: 2%;
+    font-weight: bold;
+}
+
+section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.container {
+    height: 100%;
+    max-width: 1600px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #343a40;
+    font-weight: bold;
+    text-align: center;
+}
+
+p {
+    color: #6c757d;
+    text-align: center;
+}
+
+footer {
+    background: #343a40;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 14px;
+}
+/* 검색 폼 스타일 */
+.search-area {
+    background: #ffffff;
+    padding: 15px 0;
+
+    /*border-radius: 10px;*/
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.28);
+}
+
+.search-area .form-label, .filter-container .form-label {
+    font-weight: bold;
+    color: #495057;
+}
+
+.search-area .form-select,
+.search-area .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    font-size: 16px;
+}
+/* 버튼 스타일 */
+.search-area .btn-primary {
+    background: #007bff; /* 밝은 블루 */
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2); /* 부드러운 그림자 */
+}
+
+.search-area .btn-primary:hover {
+    background: #0056b3; /* 약간 어두운 블루 */
+    box-shadow: 0 6px 10px rgba(0, 86, 179, 0.3); /* hover 시 그림자 강조 */
+}
+
+/* 검색 결과 테이블 스타일 */
+.table {
+    margin-top: 20px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #dee2e6; /* 테이블 경계선 */
+}
+
+.table th {
+    background: #007bff; /* 버튼과 동일한 블루 */
+    color: white;
+    font-weight: bold;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #dee2e6;
+}
+
+.table td {
+    text-align: center;
+    padding: 10px;
+    color: #495057;
+    /*border-top: 1px solid #dee2e6;*/
+    border: 1px solid #dee2e6;
+}
+
+/* 검색 결과 줄무늬 패턴 */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+
+/* 마우스 오버 시 강조 효과 */
+.table-striped tbody tr:hover {
+    background-color: #e2e6ea;
+    transition: background 0.3s ease-in-out;
+}
+
+/* 검색 결과 없을 때 메시지 스타일 */
+.table tbody tr td.text-center {
+    font-size: 18px;
+    font-weight: bold;
+    color: #6c757d;
+    padding: 20px;
+}
+
+.pagination .page-link {
+    color: #007bff;
+    border: 1px solid #dee2e6;
+    transition: background 0.2s;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #f8f9fa;
+}
+.button-container a {
+    margin-right: 3vw !important;
+    text-decoration: none !important;
+    color: white !important;
+    text-align: center !important;
+    font-size: 1.2rem !important;
+}
