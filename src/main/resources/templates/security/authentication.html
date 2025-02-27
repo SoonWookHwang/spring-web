@@ -1,0 +1,47 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/security}">
+<body>
+<section layout:fragment="content">
+  <script src="/public/js/security/token.js"></script>
+  <script src="/public/js/security/login.js"></script>
+  <script src="/public/js/security/authTest.js"></script>
+  <link rel="stylesheet" href="/public/css/security/auth.css"/>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <!-- 테스트 컨테이너 -->
+      <div class="col-md-6">
+        <div class="card shadow-lg mb-4 h-100">
+          <div class="card-body text-center">
+            <h2 class="mb-4">API 요청 버튼 예제</h2>
+            <div class="d-flex justify-content-center gap-3 mb-4">
+              <button class="btn btn-primary">로그인</button>
+              <button onclick="logout()" class="btn btn-primary">로그아웃</button>
+            </div>
+            <hr>
+            <div class="d-flex flex-column gap-3">
+              <button onclick="callAuthenticatedApi()" class="btn btn-primary">인증이 필요한 API</button>
+              <button onclick="callNoAthenticatedApi()" class="btn btn-primary">인증이 필요하지 않은 API</button>
+              <button class="btn btn-primary">관리자 전용 API</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 결과 컨테이너 -->
+      <div class="col-md-6">
+        <div class="card shadow-lg mb-4 h-100">
+          <div class="card-body d-flex flex-column">
+            <h2 class="mb-4">API 요청 결과</h2>
+            <div id="result_text" class="border rounded p-3 bg-light flex-grow-1">
+              여기에 API 요청 결과가 표시됩니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

@@ -1,6 +1,6 @@
 package com.spring.portfolio.jpa.service;
 
-import com.spring.portfolio.global.exceptions.ProductException;
+import com.spring.portfolio.global.exceptions.CustomProductException;
 import com.spring.portfolio.jpa.dto.CategoryDto;
 import com.spring.portfolio.jpa.dto.ProductDto;
 import com.spring.portfolio.jpa.dto.ProductSearchQueryDto;
@@ -34,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public ProductDto getProduct(Long productId) {
     Product target = productRepository.findById(productId)
-        .orElseThrow(() -> new ProductException("해당 제품이 존재하지 않습니다."));
+        .orElseThrow(() -> new CustomProductException("해당 제품이 존재하지 않습니다."));
     return ProductDto.fromEntity(target);
   }
 
@@ -120,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
       if (dto.getCategoryId() != null) {
         // categoryId로 카테고리 객체를 가져옴
         ProductCategory parentCategory = categoryRepository.findById(dto.getCategoryId())
-            .orElseThrow(() -> new ProductException("해당 카테고리를 찾을 수 없습니다"));
+            .orElseThrow(() -> new CustomProductException("해당 카테고리를 찾을 수 없습니다"));
 
         // 해당 카테고리와 하위 카테고리들을 모두 가져옴
         List<ProductCategory> allCategories = getAllSubCategories(parentCategory.getCategoryId());
@@ -150,7 +150,7 @@ public class ProductServiceImpl implements ProductService {
   @Transactional
   public Long insertProduct(ProductDto dto) {
     ProductCategory productCategory = categoryRepository.findById(dto.getCategoryId())
-        .orElseThrow(() -> new ProductException("해당되는 카테고리가 없음"));
+        .orElseThrow(() -> new CustomProductException("해당되는 카테고리가 없음"));
     Product newProduct = Product.of(dto, productCategory);
     return productRepository.save(newProduct).getProductId();
   }
@@ -158,9 +158,9 @@ public class ProductServiceImpl implements ProductService {
   @Override
   @Transactional
   public Long updateProduct(ProductDto dto) {
-    Product target = productRepository.findById(dto.getProductId()).orElseThrow(()->new ProductException("해당 제품이 존재하지 않습니다."));
+    Product target = productRepository.findById(dto.getProductId()).orElseThrow(()->new CustomProductException("해당 제품이 존재하지 않습니다."));
     ProductCategory updateCategory = categoryRepository.findById(dto.getCategoryId())
-        .orElseThrow(() -> new ProductException(("잘못된 카테고리 값입니다.")));
+        .orElseThrow(() -> new CustomProductException(("잘못된 카테고리 값입니다.")));
     target.update(dto, updateCategory);
     return target.getProductId();
   }
@@ -179,7 +179,7 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public CategoryDto getCategory(Long categoryId) {
-    ProductCategory category = categoryRepository.findById(categoryId).orElseThrow(()->new ProductException("해당 카테고리를 찾을 수 없습니다"));
+    ProductCategory category = categoryRepository.findById(categoryId).orElseThrow(()->new CustomProductException("해당 카테고리를 찾을 수 없습니다"));
     Long parentCategoryId = (category.getParentCategory()!=null && category.getParentCategory().getParentCategory() != null) ? category.getParentCategory().getParentCategory().getCategoryId() : null;
     CategoryDto dto = new CategoryDto(category.getCategoryId(),category.getName(),parentCategoryId);
     dto.setChildren(category.getSubCategories());
@@ -189,7 +189,7 @@ public class ProductServiceImpl implements ProductService {
   // 주어진 categoryId에 대한 모든 하위 카테고리들을 재귀적으로 조회
   public List<ProductCategory> getAllSubCategories(Long parentCategoryId) {
     // 첫 번째 하위 카테고리들 조회
-    ProductCategory targetCategory = categoryRepository.findById(parentCategoryId).orElseThrow(()->new ProductException("해당 카테고리가 존재하지 않습니다"));
+    ProductCategory targetCategory = categoryRepository.findById(parentCategoryId).orElseThrow(()->new CustomProductException("해당 카테고리가 존재하지 않습니다"));
     List<ProductCategory> subCategories = targetCategory.getSubCategories();
     // 재귀적으로 각 카테고리의 하위 카테고리들을 추가
     List<ProductCategory> allSubCategories = new ArrayList<>();
