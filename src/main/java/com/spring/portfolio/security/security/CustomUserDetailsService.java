@@ -2,7 +2,9 @@ package com.spring.portfolio.security.security;
 
 import com.spring.portfolio.security.entity.PortfolioUser;
 import com.spring.portfolio.security.reopository.PortfolioUserRepository;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     return User.builder()
         .username(user.getEmail())
         .password(user.getPassword())
-        .roles("USER")
+        .authorities(Collections.singleton(new SimpleGrantedAuthority(user.getRole().name())))
         .build();
   }
 }

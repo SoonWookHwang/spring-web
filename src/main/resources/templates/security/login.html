@@ -6,71 +6,84 @@
   <script src="/public/js/security/login.js"></script>
   <link rel="stylesheet" href="/public/css/security/login.css"/>
   <div class="container" id="container">
-  <div class="form-container sign-up-container">
-    <form onsubmit="return false;">
-      <h1>회원가입</h1>
-      <div class="social-container">
-        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-        <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-      </div>
-      <span>or use your email for registration</span>
-      <label for="name"></label>
-      <input type="text" name="name" id="name" placeholder="Name" />
-      <label for="email"></label>
-      <input type="email" name="email" id="email" placeholder="Email" />
-      <label for="password"></label>
-      <input type="password" name="password" id="password" placeholder="Password" />
-      <label for="keyword"></label>
-      <input type="text" name="keyword" id="keyword" placeholder="비밀번호 초기화 keyword"/>
-      <button type="button" onclick="signUp()">회원가입</button>
-    </form>
-  </div>
-  <div class="form-container sign-in-container">
-    <form onsubmit="return false;">
-      <h1>로그인</h1>
-      <div class="social-container">
-        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-        <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-      </div>
-      <span>or use your account</span>
-      <input type="email" id="loginId" placeholder="Email" />
-      <input type="password" id="loginPwd" placeholder="Password" />
-      <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" onclick="openForgotPasswordModal()">비밀번호를 잊으셨나요?</a>
-      <button onclick="signIn()">로그인</button>
-    </form>
-  </div>
-  <div class="overlay-container">
-    <div class="overlay">
-      <div class="overlay-panel overlay-left">
-        <h1>회원가입 페이지</h1>
-        <p>포트폴리오용 페이지로 개인정보를 일체 받지 않습니다. 평소 사용하지 않는 간단한 비밀번호를 사용해 회원가입을 해주세요</p>
-        <button class="ghost" id="signIn">기존회원 로그인</button>
-      </div>
-      <div class="overlay-panel overlay-right">
-        <h1>신규 회원</h1>
-        <p>계정을 생성해 테스트 해보세요</p>
-        <button class="ghost" id="signUp">신규회원 회원가입</button>
+    <div class="form-container sign-up-container">
+      <form onsubmit="return false;">
+        <h1>회원가입</h1>
+        <div class="social-container">
+          <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <span>or use your email for registration</span>
+        <label for="name"></label>
+        <input type="text" name="name" id="name" placeholder="Name"/>
+        <label for="email"></label>
+        <input type="email" name="email" id="email" placeholder="Email"/>
+        <label for="password"></label>
+        <input type="password" name="password" id="password" placeholder="Password"/>
+        <label for="keyword"></label>
+        <input type="text" name="keyword" id="keyword" placeholder="비밀번호 초기화 keyword"/>
+        <label for="isAdmin"></label>
+        <div class="form-check d-flex align-items-center justify-content-between w-100">
+          <label class="form-check-label text-secondary" for="isAdmin">어드민 계정 체크</label>
+          <input class="form-check-input" type="checkbox" id="isAdmin" name="isAdmin">
+        </div>
+        <label for="adminCode"></label>
+        <input type="text" name="adminCode" id="adminCode" placeholder="관리자 계정 생성 코드: admin_test"/>
+        <button type="button" onclick="signUp()">회원가입</button>
+      </form>
+    </div>
+    <div class="form-container sign-in-container">
+      <form onsubmit="return false;">
+        <h1>로그인</h1>
+        <div class="social-container">
+          <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <span>or use your account</span>
+        <input type="email" id="loginId" placeholder="Email"/>
+        <input type="password" id="loginPwd" placeholder="Password"/>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal"
+           onclick="openForgotPasswordModal()">비밀번호를 잊으셨나요?</a>
+        <button onclick="signIn()">로그인</button>
+      </form>
+    </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>회원가입 페이지</h1>
+          <p>포트폴리오용 페이지로 개인정보를 일체 받지 않습니다. 평소 사용하지 않는 간단한 비밀번호를 사용해 회원가입을 해주세요</p>
+          <button class="ghost" id="signIn">기존회원 로그인</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>신규 회원</h1>
+          <p>계정을 생성해 테스트 해보세요</p>
+          <button class="ghost" id="signUp">신규회원 회원가입</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-  <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordLabel" aria-hidden="true">
+  <div class="modal fade" id="forgotPasswordModal" tabindex="-1"
+       aria-labelledby="forgotPasswordLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="forgotPasswordLabel">비밀번호 초기화</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="closeForgotPasswordModal()" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                  onclick="closeForgotPasswordModal()" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div style="text-align: center">가입하실때 설정하신 비밀번호 변경 키워드를 입력하시면 <br>비밀번호가 abcd#1234로 초기화 됩니다.</div>
+          <div style="text-align: center">가입하실때 설정하신 비밀번호 변경 키워드를 입력하시면 <br>비밀번호가 abcd#1234로 초기화
+            됩니다.
+          </div>
           <input type="email" class="form-control" id="resetEmail" placeholder="이메일 입력">
           <input type="text" class="form-control" id="key_text" placeholder="키워드 입력">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary" onclick="sendPasswordReset()">비밀번호 재설정</button>
+          <button type="button" class="btn btn-primary" onclick="sendPasswordReset()">비밀번호 재설정
+          </button>
         </div>
       </div>
     </div>

@@ -14,7 +14,10 @@ public class SignUpDto {
   private String name;
   private String keyword;
 
+  private String isAdmin;
+  private String adminCode;
+
   public SignUpDto withPassword(String password) {
-    return new SignUpDto(this.email, password,this.name,this.keyword);
+    return new SignUpDto(this.email, password,this.name,this.keyword, this.isAdmin, adminCode);
   }
 }
