@@ -1,6 +1,9 @@
 package com.spring.portfolio.security.security;
 
+import com.spring.portfolio.security.entity.PortfolioUser;
+import com.spring.portfolio.security.reopository.PortfolioUserRepository;
 import com.spring.portfolio.security.reopository.RefreshTokenRepository;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -13,13 +16,14 @@ import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
-
+  private final PortfolioUserRepository userRepository;
   private final RefreshTokenRepository refreshTokenRepository;
 
   @Value("${jwt.secret}")
@@ -40,8 +44,11 @@ public class JwtTokenProvider {
 
   public String generateToken(String email, boolean isRefreshToken) {
     long expirationTime = isRefreshToken ? refreshTokenValidity : accessTokenValidity;
+    PortfolioUser user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     String token = Jwts.builder()
         .setSubject(email)
+        .claim("role",user.getRole().name())
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
         .signWith(key, SignatureAlgorithm.HS256)
@@ -53,7 +60,6 @@ public class JwtTokenProvider {
   }
 
   public String getEmailFromToken(String token) {
-    log.info("getEmailFromToken");
     return Jwts.parserBuilder().setSigningKey(key).build()
         .parseClaimsJws(token).getBody().getSubject();
   }
@@ -63,7 +69,7 @@ public class JwtTokenProvider {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
       return true;
     } catch (ExpiredJwtException e) {
-      log.warn("JWT 토큰이 만료되었습니다: {}", e.getMessage());
+      log.warn("JWT 토큰이 만료되었습니다");
       throw e;
     } catch (MalformedJwtException e) {
       log.error("잘못된 형식의 JWT 토큰입니다: {}", e.getMessage());
@@ -71,6 +77,14 @@ public class JwtTokenProvider {
       log.error("JWT 토큰 검증 실패: {}", e.getMessage());
     }
     return false;
+  }
+  public String getRoleFromToken(String token) {
+    Claims claims = Jwts.parserBuilder()
+        .setSigningKey(secretKey)
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
+    return claims.get("role", String.class); // JWT에서 role 추출
   }
 
   public void saveRefreshToken(String email, String refreshToken) {

@@ -272,4 +272,19 @@ p {
   position: relative;
   z-index: 1050; /* md-bg보다 높게 설정 */
 }
+/* 체크박스 크기 조정 */
+.form-check-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
 
+/* 체크박스 선택 시 스타일 */
+.form-check-input:checked {
+  background-color: #007bff; /* 부트스트랩 기본 파란색 */
+  border-color: #007bff;
+}
+
+#adminCode {
+  display: none;
+}

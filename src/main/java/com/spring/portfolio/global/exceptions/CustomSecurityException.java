@@ -8,4 +8,8 @@ public class CustomSecurityException extends CustomException{
     super(message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  public CustomSecurityException(String message,HttpStatus httpStatus) {
+    super(message, httpStatus);
+  }
+
 }

@@ -8,8 +8,9 @@ import com.spring.portfolio.security.entity.PortfolioUser;
 import com.spring.portfolio.security.reopository.PortfolioUserRepository;
 import com.spring.portfolio.security.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,8 +24,10 @@ public class PortfolioUserServiceImpl implements PortfolioUserService{
   private final JwtTokenProvider jwtTokenProvider;
   private final PortfolioUserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
-  private final AuthenticationManager authenticationManager;
   private final UserDetailsService userDetailsService;
+
+  @Value("${portfolio.admin-code}")
+  String adminCode;
 
   @Override
   @Transactional
@@ -34,7 +37,12 @@ public class PortfolioUserServiceImpl implements PortfolioUserService{
         throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
       }
       String encodedPassword = passwordEncoder.encode(dto.getPassword());
-      PortfolioUser newUser = PortfolioUser.of(dto.withPassword(encodedPassword));
+      PortfolioUser newUser;
+      if(dto.getIsAdmin().equals("T")&&isAdmin(dto)){
+        newUser = PortfolioUser.of(dto.withPassword(encodedPassword),true);
+      }else{
+        newUser = PortfolioUser.of(dto.withPassword(encodedPassword),false);
+      }
       return userRepository.save(newUser).getId();
     }catch (Exception e){
       throw new CustomSecurityException("회원가입 실패 caused by : " + e.getMessage());
@@ -44,10 +52,21 @@ public class PortfolioUserServiceImpl implements PortfolioUserService{
   @Override
   public TokenDto signIn(SignInDto dto) {
     UserDetails user = userDetailsService.loadUserByUsername(dto.getEmail());
-    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword()));
-    TokenDto tokenDto = new TokenDto();
-    tokenDto.setAccessToken(jwtTokenProvider.generateToken(user.getUsername(), false));
-    tokenDto.setRefreshToken(jwtTokenProvider.generateToken(user.getUsername(),true));
-    return tokenDto;
+    if( passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+      TokenDto tokenDto = new TokenDto();
+      tokenDto.setAccessToken(jwtTokenProvider.generateToken(user.getUsername(), false));
+      tokenDto.setRefreshToken(jwtTokenProvider.generateToken(user.getUsername(), true));
+      return tokenDto;
+    }else{
+      throw new CustomSecurityException("비밀번호 불일치", HttpStatus.NOT_ACCEPTABLE);
+    }
+  }
+
+  public boolean isAdmin(SignUpDto dto){
+    if(dto.getAdminCode().equals(adminCode)){
+      return true;
+    }else{
+      return false;
+    }
   }
 }

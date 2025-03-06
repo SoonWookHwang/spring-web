@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -17,9 +19,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final AuthenticationEntryPoint customAuthenticationEntryPoint;
+  private final AccessDeniedHandler customAccessDeniedHandler;
 
   @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig)
+      throws Exception {
     return authConfig.getAuthenticationManager();
   }
 
@@ -29,20 +34,24 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        // endpoint 인증 인가 관리
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/").permitAll()
             .requestMatchers("/jpa/**").permitAll()
             .requestMatchers("/public/**").permitAll()
-            .requestMatchers("/security/**").permitAll()
-            .requestMatchers("/security/non/**").permitAll()
+            .requestMatchers("/security/admin/**").hasRole("ADMIN")
             .requestMatchers("/security/authenticated/**").authenticated()
+            .requestMatchers("/security/**").permitAll()
             .anyRequest().authenticated()
         )
+        //인증 인가 Exception 처리
+        .exceptionHandling(exception -> exception
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
+            .accessDeniedHandler(customAccessDeniedHandler)
+        )
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
     return http.build();
   }
-
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();

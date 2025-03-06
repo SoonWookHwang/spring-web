@@ -3,7 +3,6 @@ package com.spring.portfolio.security.controller;
 import com.spring.portfolio.security.dto.SignInDto;
 import com.spring.portfolio.security.dto.SignUpDto;
 import com.spring.portfolio.security.dto.TokenDto;
-import com.spring.portfolio.security.security.JwtRequired;
 import com.spring.portfolio.security.security.JwtTokenProvider;
 import com.spring.portfolio.security.service.PortfolioUserService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -65,17 +64,17 @@ public class SecurityRestController {
       return ResponseEntity.status(500).body("로그아웃 중 오류가 발생했습니다.");
     }
   }
-
   @GetMapping("/authenticated")
-  @JwtRequired
   public ResponseEntity<?> authenticatedApi(){
     return ResponseEntity.ok("인증 통과 됌");
   }
   @GetMapping("/non/authenticated")
-  @JwtRequired
   public ResponseEntity<?> nonAuthenticatedApi(){
     return ResponseEntity.ok("인증 유무 상과없이 통과 됌");
   }
-
+  @GetMapping("/admin/authenticated")
+  public ResponseEntity<?> adminAthenticatedApi() {
+    return ResponseEntity.ok("어드민 계정 인증 통과 ");
+  }
 
 }
