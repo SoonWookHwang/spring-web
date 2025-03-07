@@ -7,6 +7,7 @@ import com.spring.portfolio.security.dto.TokenDto;
 import com.spring.portfolio.security.entity.PortfolioUser;
 import com.spring.portfolio.security.reopository.PortfolioUserRepository;
 import com.spring.portfolio.security.security.JwtTokenProvider;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -60,6 +61,11 @@ public class PortfolioUserServiceImpl implements PortfolioUserService{
     }else{
       throw new CustomSecurityException("비밀번호 불일치", HttpStatus.NOT_ACCEPTABLE);
     }
+  }
+
+  @Override
+  public List<PortfolioUser> getUsersToEmail() {
+    return userRepository.findAll();
   }
 
   public boolean isAdmin(SignUpDto dto){
