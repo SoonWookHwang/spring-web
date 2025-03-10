@@ -3,9 +3,9 @@ package com.spring.portfolio.jpa.entity;
 import com.spring.portfolio.jpa.dto.ProductDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Getter
@@ -34,5 +34,10 @@ public class Product extends TimeStamps{
         this.price = dto.getPrice();
         this.stock = dto.getStock();
         this.category = updateCategory;
+    }
+
+//    @Transactional
+    public void decreaseStockToBatch(){
+        this.stock = Math.max((this.stock - 1), 0);
     }
 }

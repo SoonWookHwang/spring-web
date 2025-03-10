@@ -1,10 +1,16 @@
 package com.spring.portfolio.batch.config;
 
 import com.spring.portfolio.batch.component.EmailBatchTasklet;
+import com.spring.portfolio.batch.entity.BatchLog;
+import com.spring.portfolio.batch.service.BatchLogService;
+import com.spring.portfolio.jpa.entity.Product;
+import com.spring.portfolio.jpa.repository.ProductRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.websocket.Transformation;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -30,8 +36,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableScheduling
 public class BatchConfig extends DefaultBatchConfiguration {
 
-  private final DataSource dataSource;
   private final EmailBatchTasklet emailSendingTasklet;
+
+  private final ProductRepository productRepository;
+
+  private final BatchLogService batchLogService;
 
   /*
   스프링 배치 5버전 이상에서는 batch관련 설정들이 인메모리 db의 자동생성방식에서 개발자가 데이터소스, 레포지토리, 트랜잭션 매니저를 직접 설정해주는 것으로 변경됌
@@ -49,35 +58,70 @@ public class BatchConfig extends DefaultBatchConfiguration {
   public Job sampleJob(JobRepository jobRepository, Step sampleStep) {
     return new JobBuilder("sampleJob", jobRepository)
         .start(sampleStep)
+        .listener(new CustomJobListener(batchLogService))
         .build();
   }
+
+  // itemReader, itemProcessor, itemWriter 방식은 많은 양의 데이터와 복잡한 처리 로직에 사용됌
   @Bean
   public Step sampleStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
     return new StepBuilder("sampleStep", jobRepository)
-        .<String, String>chunk(10, transactionManager) // 청크 크기 및 트랜잭션 매니저 지정
+        .<Product,Product>chunk(100, transactionManager) // 청크 크기 및 트랜잭션 매니저 지정 청크 크기단위로 트랜잭션이 처리됌
         .reader(itemReader())		 // ItemReader 구현체
         .processor(itemProcessor())	// ItemProcessor 구현체
         .writer(itemWriter()) 		// ItemWriter 구현체
+        .listener(new CustomChunkListener()) // 청크단위로 실행되는 것 확인
         .build();
   }
 
   // ItemReader 구현체
-  private ItemReader<String> itemReader() {
+  private ItemReader<Product> itemReader() {
+    List<Product> products = productRepository.findAll();
     log.info("itemReader call");
-    return new ListItemReader<>(List.of("item1", "item2", "item3"));
+//    return new ListItemReader<>(List.of("item1", "item2", "item3"));
+    return new ListItemReader<>(products);
   }
 
-  // ItemProcessor 구현체
-  private ItemProcessor<String, String> itemProcessor() {
+/*   ItemProcessor 구현체
+  데이터 변환 (Transformation)
+
+  데이터 형식을 변경하거나, 특정 필드를 조작할 때 사용
+  예: String 데이터를 Integer로 변환, 날짜 포맷 변경
+  데이터 필터링 (Filtering)
+
+  특정 조건을 만족하는 데이터만 Writer로 전달
+  null을 반환하면 해당 데이터는 Writer로 넘어가지 않음
+  예: 품절된 상품은 배치 처리에서 제외
+  비즈니스 로직 적용
+
+  데이터에 대한 가공 로직을 수행
+  예: 재고(stock) 감소, 가격 조정, 특정 규칙 적용*/
+  private ItemProcessor<Product, Product> itemProcessor() {
     log.info("itemProcessor call");
-    return item -> "Processed " + item;
+    return product -> {
+      if (product.getStock() > 0) {
+        product.decreaseStockToBatch();
+        return product;
+      }
+      log.info("재고가 없는 제품 ID: {}", product.getProductId());
+      return null; // ✅ 재고가 0이면 Writer로 전달되지 않음
+    };
   }
 
   // ItemWriter 구현체
-  private ItemWriter<Object> itemWriter() {
-    return items -> items.forEach(item -> log.info(item.toString()));
+  private ItemWriter<Product> itemWriter() {
+//    BatchLog batchLog = new BatchLog();
+//    batchLog.setStatus("success");
+//    batchLog.setCompleteDate(LocalDateTime.now());
+//    batchLog.setJobName("sampleJob");
+//    batchLog.setStepName("sampleStep");
+//    batchLogService.insertBatchLog(batchLog);
+    return items-> {
+      log.info("처리된 완료 수 : "+items.size());
+    };
   }
 
+  // 단일 작업 용 tasklet 처리 tasklet 방식은 단순하고 적은 데이터 양의 처리에 사용됌
   @Bean
   public Job emailJob(JobRepository jobRepository) {
     return new JobBuilder("emailJob",jobRepository)
@@ -90,24 +134,4 @@ public class BatchConfig extends DefaultBatchConfiguration {
         .tasklet(emailSendingTasklet, transactionManager)
         .build();
   }
-
-//  @Bean
-//  public PlatformTransactionManager transactionManager() {
-//    return new DataSourceTransactionManager(dataSource);
-//  }
-//
-//  @Bean
-//  public JobRepository jobRepository() {
-//    JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
-//    factory.setDataSource(dataSource);
-//    factory.setTransactionManager(transactionManager); // 여기서 직접 호출하지 않음
-//    factory.setDatabaseType("MYSQL"); // 사용 중인 DB 종류 (MySQL, H2 등)
-//    try {
-//      return factory.getObject();
-//    } catch (Exception e) {
-//      throw new RuntimeException(e);
-//    }
-//  }
-
-
 }
