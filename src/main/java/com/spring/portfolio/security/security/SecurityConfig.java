@@ -42,6 +42,7 @@ public class SecurityConfig {
             .requestMatchers("/security/admin/**").hasRole("ADMIN")
             .requestMatchers("/security/authenticated/**").authenticated()
             .requestMatchers("/security/**").permitAll()
+            .requestMatchers("/batch/**").permitAll()
             .anyRequest().authenticated()
         )
         //인증 인가 Exception 처리
